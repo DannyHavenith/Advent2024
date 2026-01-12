@@ -1,14 +1,18 @@
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <regex>
-#include <set>
+#include <unordered_set>
 #include <string>
 
 #include "../timer.h"
 
 namespace {
-    using AdjacencyList = std::map<int, std::set<int>>;
+    using PageNumber = int;
+
+    // page numbers are all < 100
+    constexpr auto maxPages = 99;
+    using AdjacencyList = std::array<std::vector<PageNumber>, maxPages>;
+
 }
 
 int main()
@@ -24,7 +28,7 @@ int main()
 
     while (getline( input, line) and std::regex_match( line, match, orderPattern))
     {
-        predecessors[stoi(match[2])].insert( stoi(match[1]));
+        predecessors[stoi(match[2])].push_back( stoi(match[1]));
     }
 
     std::size_t sum = 0;
@@ -32,7 +36,7 @@ int main()
     {
         std::stringstream numberStream{line};
         std::string numberString;
-        std::set<int> forbidden;
+        std::unordered_set<int> forbidden;
         std::vector<int> numbers;
         bool valid = true;
         while (getline( numberStream, numberString, ','))
