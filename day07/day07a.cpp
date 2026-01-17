@@ -21,8 +21,8 @@ namespace {
 
         // try all combinations, but be aware of overflow.
         return
-            (multiplied > soFar and Solvable( result, multiplied, elements.subspan<1>()))
-            or (added > soFar and Solvable( result, added, elements.subspan<1>()));
+            (multiplied >= soFar and Solvable( result, multiplied, elements.subspan<1>()))
+            or (added   > soFar and Solvable( result, added, elements.subspan<1>()));
     }
 
     bool Solvable( const Number result, std::span<Number> elements)
@@ -41,14 +41,14 @@ int main()
     const std::regex equationPattern{"(\\d+): (.*)"};
     std::smatch match;
 
-    std::size_t sum = 0;
+    Number sum = 0;
     while (getline( input, line) and std::regex_match( line, match, equationPattern))
     {
         std::vector< Number> numbers;
-        const auto result = std::stoul( match[1]);
+        const auto result = std::stoull( match[1]);
         for (const auto &numString : std::views::split( std::string_view{match[2].first, match[2].second}, ' '))
         {
-            numbers.push_back( std::stoul( std::string{numString.begin(), numString.end()}));
+            numbers.push_back( std::stoull( std::string{numString.begin(), numString.end()}));
         }
 
         if (Solvable( result, numbers)) sum += result;
