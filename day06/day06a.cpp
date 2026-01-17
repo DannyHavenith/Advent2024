@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <ranges>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -87,12 +86,14 @@ int main()
         g.Peek( g.position, map) = 'X';
         Position nextPos = g.Step( g.position);
         if (nextPos.col >= columns or nextPos.row >= rows) break;
-        while (g.Peek( nextPos, map) == '#')
+        if (g.Peek( nextPos, map) == '#')
         {
             g.Rotate();
-            nextPos = g.Step( g.position);
         }
-        g.position = nextPos;
+        else
+        {
+            g.position = nextPos;
+        }
     }
 
     std::size_t sum = std::ranges::count( map | std::views::join , 'X');
