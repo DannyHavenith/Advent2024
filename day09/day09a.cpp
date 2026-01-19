@@ -1,13 +1,9 @@
 #include <algorithm>
 #include <cassert>
-#include <cstdint>
 #include <iostream>
 #include <fstream>
 #include <numeric>
-#include <ranges>
-#include <regex>
 #include <string>
-#include <vector>
 
 #include "../timer.h"
 
@@ -20,7 +16,7 @@ int main()
     std::ifstream input{"input09.txt"};
     std::string blocks;
     getline( input, blocks);
-    assert( line.size() % 2 == 1);
+    assert( blocks.size() % 2 == 1);
 
     // convert all blocks from one-digit characters ('0'-'9') to their numerical
     // value (0-9).
