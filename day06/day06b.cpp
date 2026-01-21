@@ -109,10 +109,15 @@ namespace {
             step = ((direction ^ (direction >> 1)) & 0x01) ? 1 : -1;
         }
 
-        Position Step( Position pos)
+        Position NextPos( Position pos) const
         {
             pos.*heading += step;
             return pos;
+        }
+
+        Position NextPos() const
+        {
+            return NextPos( position);
         }
 
         static char &Peek( const Position &pos, Map &map)
@@ -145,7 +150,7 @@ namespace {
                 return true;
             }
 
-            Position nextPos = g.Step( g.position);
+            Position nextPos = g.NextPos();
             if (nextPos.col >= columns or nextPos.row >= rows) return false;
 
             if (g.Peek( nextPos, map) == '#')
@@ -181,7 +186,7 @@ namespace {
                 return 0; // something's wrong: we're looping already.
             }
 
-            Position nextPos = g.Step( g.position);
+            Position nextPos = g.NextPos();
             if (nextPos.col < columns and nextPos.row < rows and g.Peek( nextPos, map) == '#')
             {
                 g.Rotate();
