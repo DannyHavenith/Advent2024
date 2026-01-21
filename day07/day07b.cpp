@@ -1,3 +1,4 @@
+#include <charconv>
 #include <iostream>
 #include <fstream>
 #include <ranges>
@@ -10,27 +11,35 @@
 namespace {
     using Number = std::uint64_t;
 
-    bool Solvable( const Number result, const Number soFar, std::span<std::string> elements)
+    bool Solvable( const Number result, const Number soFar, std::span<std::string_view> elements)
     {
         if (soFar > result) return false;
         if (elements.empty()) return result == soFar;
 
-        const auto front = std::stoull( elements.front());
+        Number front{};
+        std::from_chars( elements.front().begin(), elements.front().end(), front);
 
         const auto multiplied = soFar * front;
         const auto added = soFar + front;
-        const auto concatenated = std::stoull( std::to_string( soFar) + elements.front());
 
         // try all combinations, but be aware of overflow.
-        return
+        if (
             (multiplied >= soFar and Solvable( result, multiplied, elements.subspan<1>()))
-            or (added   > soFar and Solvable( result, added, elements.subspan<1>()))
-            or (concatenated > soFar and Solvable( result, concatenated, elements.subspan<1>()));
+            or (added   > soFar and Solvable( result, added, elements.subspan<1>())))
+        {
+            return true;
+        }
+
+        // no views::concat until C++26
+        const auto concatenated = std::stoull( std::to_string( soFar) + std::string(elements.front()));
+        return concatenated > soFar and Solvable( result, concatenated, elements.subspan<1>());
     }
 
-    bool Solvable( const Number result, std::span<std::string> elements)
+    bool Solvable( const Number result, std::span<std::string_view> elements)
     {
-        return Solvable( result, std::stoull( elements.front()), elements.subspan<1>());
+        Number front;
+        std::from_chars( elements.front().begin(), elements.front().end(), front);
+        return Solvable( result, front, elements.subspan<1>());
     }
 }
 
@@ -46,7 +55,7 @@ int main()
     Number sum = 0;
     while (getline( input, line) and std::regex_match( line, match, equationPattern))
     {
-        std::vector< std::string> numbers;
+        std::vector< std::string_view> numbers;
         const auto result = std::stoull( match[1]);
         for (const auto &numString : std::views::split( std::string_view{match[2].first, match[2].second}, ' '))
         {
