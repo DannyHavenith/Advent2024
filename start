@@ -1,0 +1,13 @@
+#! /bin/bash
+
+DAY=$(printf "%02d" $1)
+DAYF=day${DAY}
+
+if [[ -e ${DAYF}/${DAYF}a.cpp ]]
+then
+    echo "Not overwriting existing ${DAYF}/${DAYF}a.cpp"
+else
+    cp template.cpp ${DAYF}/${DAYF}a.cpp
+fi
+code ${DAYF}/${DAYF}a.cpp ${DAYF}/example${DAY}.txt ${DAYF}/input${DAY}.txt
+gio open https://adventofcode.com/2024/day/$1
